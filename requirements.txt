@@ -1,0 +1,2 @@
+-e .[dev]
+--index-url https://pypi.python.org/simple/
