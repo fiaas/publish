@@ -3,12 +3,8 @@
 
 """Publish a new version of a library
 
-Script is assumed to be run using a CI system to release a version from a
-successful build.
-
 To release a new version, create a git annotated tag named v<major>.<minor>.<patch>,
-according to Semantic Versioning principles. After you have pushed the tag, CI will
-build the commit, and then run this script to deploy a release.
+according to Semantic Versioning principles. Then run this script to deploy a release.
 
 When running, you must supply the github organization and repo, so that links in the
 changelog will be correct, and in order to create correct Github releases.
@@ -122,6 +118,7 @@ class Repository(object):
 class Uploader(object):
     def __init__(self, options, version, changelog, artifacts):
         self.dry_run = options.dry_run
+        self.repo = options.repository
         self.version = version
         self.changelog = changelog
         self.artifacts = artifacts
@@ -143,14 +140,14 @@ class Uploader(object):
         """Create release in github, and upload artifacts and changelog"""
         gh_path = get_github_release()
         self._call(gh_path, "release",
-                   "--repo", "k8s",
+                   "--repo", self.repo,
                    "--tag", self.version,
                    "--description", format_gh_changelog(self.changelog),
                    msg="Failed to create release on Github")
         for artifact in self.artifacts:
             name = os.path.basename(artifact)
             self._call(gh_path, "upload",
-                       "--repo", "k8s",
+                       "--repo", self.repo,
                        "--tag", self.version,
                        "--name", name,
                        "--file", artifact,
@@ -165,12 +162,12 @@ def format_rst_changelog(changelog, options):
     output = CHANGELOG_HEADER.splitlines(False)
     links = {}
     for sha, summary in changelog:
-        links[sha] = ".. _{sha}: https://{github}/{org}/{repo}/commit/{sha}".format(
-            sha=sha, github=options.github, org=options.organization, repo=options.repository)
+        links[sha] = ".. _{sha}: https://github.com/{org}/{repo}/commit/{sha}".format(
+            sha=sha, org=options.organization, repo=options.repository)
         for match in ISSUE_NUMBER.finditer(summary):
             issue_number = match.group(1)
-            links[issue_number] = ".. _#{num}: https://{github}/{org}/{repo}/issues/{num}".format(
-                num=issue_number, github=options.github, org=options.organization, repo=options.repository)
+            links[issue_number] = ".. _#{num}: https://github.com/{org}/{repo}/issues/{num}".format(
+                num=issue_number, org=options.organization, repo=options.repository)
         summary = ISSUE_NUMBER.sub(r"`#\1`_", summary)
         output.append("* `{sha}`_: {summary}".format(sha=sha, summary=summary))
     output.append("")
@@ -188,13 +185,13 @@ def format_gh_changelog(changelog):
     return "\n".join(output)
 
 
-def create_artifacts(changelog):
+def create_artifacts(changelog, options):
     """List all artifacts for uploads
 
     Wheels and tarballs
     """
     fd, name = tempfile.mkstemp(prefix="changelog", suffix=".rst", text=True)
-    formatted_changelog = format_rst_changelog(changelog)
+    formatted_changelog = format_rst_changelog(changelog, options)
     if six.PY2:
         with os.fdopen(fd, "w") as fobj:
             fobj.write(formatted_changelog.encode("utf-8"))
@@ -211,25 +208,28 @@ def create_artifacts(changelog):
     return [os.path.abspath(os.path.join("dist", fname)) for fname in os.listdir("dist")]
 
 
-def main(options):
+def publish(options):
     repo = Repository(options)
     if not repo.ready_for_release():
         print("Repository is not ready for release", file=sys.stderr)
         return
     changelog = repo.generate_changelog()
-    artifacts = create_artifacts(changelog)
+    artifacts = create_artifacts(changelog, options)
     uploader = Uploader(options, repo.version, changelog, artifacts)
     uploader.github_release()
     uploader.pypi_release()
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=Formatter)
     parser.add_argument("-d", "--directory", default=".", help="Git repository")
     parser.add_argument("-f", "--force", action="store_true", help="Make a release even if the repo is unclean")
     parser.add_argument("-n", "--dry-run", action="store_true", help="Do everything, except upload to GH/PyPI")
-    parser.add_argument("-g", "--github", default="https://github.com", help="Base URL of your Github instance")
     parser.add_argument("organization", help="Github organization")
     parser.add_argument("repository", help="The repository")
     options = parser.parse_args()
-    main(options)
+    publish(options)
+
+
+if __name__ == "__main__":
+    main()
