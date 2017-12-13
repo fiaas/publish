@@ -85,7 +85,15 @@ def main():
             "Topic :: Internet",
             "Topic :: Software Development :: Build Tools",
             "Topic :: System :: Software Distribution",
-        ]
+        ],
+
+        # Entrypoints
+        entry_points={
+            "console_scripts": [
+                "publish= publish:main"
+            ]
+        }
+
     )
 
 
