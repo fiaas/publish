@@ -13,9 +13,9 @@ publish - Tool to create a release of a Python package
 
 publish is a tool to package and release a python project. It will create a changelog and upload artifacts to Github and PyPI.
 
-It is created for and by the `Fiaas project`_, and used for most of our projects.
+It is created for and by the `FIAAS project`_, and used for most of our projects.
 
-.. _`Fiaas project`: https://github.com/fiaas
+.. _`FIAAS project`: https://github.com/fiaas
 
 
 Usage
