@@ -78,7 +78,6 @@ def main():
             "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.3",
             "Programming Language :: Python :: 3.4",
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
@@ -90,7 +89,8 @@ def main():
         # Entrypoints
         entry_points={
             "console_scripts": [
-                "publish= publish:main"
+                "publish=publish:main",
+                "get_github_release=get_github_release:main"
             ]
         }
 
