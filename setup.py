@@ -5,9 +5,9 @@ import os
 from setuptools import setup
 
 GENERIC_REQ = [
-    "six==1.10.0",
-    'GitPython==2.1.8',
-    "twine==1.9.1"
+    "six==1.11.0",
+    'GitPython==2.1.11',
+    "twine==1.12.1"
 ]
 
 CODE_QUALITY_REQ = [
@@ -15,12 +15,12 @@ CODE_QUALITY_REQ = [
 ]
 
 TESTS_REQ = [
-    'tox==2.7.0',
+    'tox==3.4.0',
     'mock==2.0.0',
-    'pytest==3.3.1',
-    'pytest-cov==2.5.1',
-    'pytest-html==1.16.0',
-    'pytest-sugar==0.9.0',
+    'pytest==3.8.2',
+    'pytest-cov==2.6.0',
+    'pytest-html==1.19.0',
+    'pytest-sugar==0.9.1',
 ]
 
 
