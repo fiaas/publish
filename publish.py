@@ -135,6 +135,7 @@ class Uploader(object):
                 subprocess.check_call(args)
         except subprocess.CalledProcessError:
             print(msg, file=sys.stderr)
+            raise
 
     def github_release(self):
         """Create release in github, and upload artifacts and changelog"""
@@ -216,8 +217,13 @@ def publish(options):
     changelog = repo.generate_changelog()
     artifacts = create_artifacts(changelog, options)
     uploader = Uploader(options, repo.version, changelog, artifacts)
-    uploader.github_release()
-    uploader.pypi_release()
+    return_code = 0
+    for i, release in enumerate((uploader.github_release, uploader.pypi_release)):
+        try:
+            release()
+        except subprocess.CalledProcessError:
+            return_code |= pow(2, i)
+    return return_code
 
 
 def main():
@@ -228,7 +234,7 @@ def main():
     parser.add_argument("organization", help="Github organization")
     parser.add_argument("repository", help="The repository")
     options = parser.parse_args()
-    publish(options)
+    sys.exit(publish(options))
 
 
 if __name__ == "__main__":
