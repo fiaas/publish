@@ -13,23 +13,22 @@ The script will do the following steps:
 - Check if the build refers exactly to an annotated tag following the convention above
 - Generate a suitable changelog
 - Create packages for upload (wheels and tarballs)
-- Use https://github.com/aktau/github-release to create a Github release
+- Use https://github.com/j0057/github-release to create a Github release
 - Use the projects setup.py to create a PyPi release (using Twine for upload)
 """
 from __future__ import unicode_literals, print_function
 
 import argparse
-import subprocess
-
 import os
 import re
-import six
+import subprocess
 import sys
 import tempfile
+
+import six
 from git import Repo, BadName, GitCommandError
 from git.cmd import Git
-
-from get_github_release import get_github_release
+from github_release import gh_release_create
 
 # Magical, always present, empty tree reference
 # https://stackoverflow.com/questions/9765453/
@@ -118,7 +117,7 @@ class Repository(object):
 class Uploader(object):
     def __init__(self, options, version, changelog, artifacts):
         self.dry_run = options.dry_run
-        self.repo = options.repository
+        self.repo = "{}/{}".format(options.organization, options.repository)
         self.version = version
         self.changelog = changelog
         self.artifacts = artifacts
@@ -139,20 +138,10 @@ class Uploader(object):
 
     def github_release(self):
         """Create release in github, and upload artifacts and changelog"""
-        gh_path = get_github_release()
-        self._call(gh_path, "release",
-                   "--repo", self.repo,
-                   "--tag", self.version,
-                   "--description", format_gh_changelog(self.changelog),
-                   msg="Failed to create release on Github")
-        for artifact in self.artifacts:
-            name = os.path.basename(artifact)
-            self._call(gh_path, "upload",
-                       "--repo", self.repo,
-                       "--tag", self.version,
-                       "--name", name,
-                       "--file", artifact,
-                       msg="Failed to upload artifact {} to Github".format(name))
+        gh_release_create(
+            self.repo, self.version, self.artifacts,
+            body=format_gh_changelog(self.changelog), publish=True, dry_run=self.dry_run
+        )
 
     def pypi_release(self):
         """Create release in pypi.python.org, and upload artifacts and changelog"""

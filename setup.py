@@ -5,9 +5,10 @@ import os
 from setuptools import setup
 
 GENERIC_REQ = [
-    "six==1.11.0",
+    "six==1.12.0",
     'GitPython==2.1.11',
-    "twine==1.12.1"
+    "twine==1.12.1",
+    "githubrelease==1.5.8",
 ]
 
 CODE_QUALITY_REQ = [
@@ -15,12 +16,12 @@ CODE_QUALITY_REQ = [
 ]
 
 TESTS_REQ = [
-    'tox==3.4.0',
+    'tox==3.6.1',
     'mock==2.0.0',
-    'pytest==3.8.2',
+    'pytest==4.0.2',
     'pytest-cov==2.6.0',
     'pytest-html==1.19.0',
-    'pytest-sugar==0.9.1',
+    'pytest-sugar==0.9.2',
 ]
 
 
@@ -46,7 +47,7 @@ def _read(filename):
 
 def main():
     setup(
-        name="publish",
+        name="fiaas-publish",
         author="FiaaS developers",
         author_email="fiaas@googlegroups.com",
         use_scm_version=True,
@@ -89,8 +90,7 @@ def main():
         # Entrypoints
         entry_points={
             "console_scripts": [
-                "publish=publish:main",
-                "get_github_release=get_github_release:main"
+                "publish=publish:main"
             ]
         }
 

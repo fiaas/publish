@@ -28,7 +28,6 @@ In order to use publish, you must first install it::
 
 Under the covers, publish uses github-release_ and twine_ to do most of the work, and those tools require credentials for Github and PyPI to be available in environment variables::
 
-    export GITHUB_USER=gh-user
     export GITHUB_TOKEN=gh-token
     export TWINE_USERNAME=pypi-user
     export TWINE_PASSWORD=pypi-pass
@@ -47,5 +46,5 @@ Before uploading anything, publish will verify that the current checkout is suit
 
 If the answer to all of these is yes, the name of the tag is used as the version to release. A changelog is generated from the git log, source tarballs and wheels are built, the release is created in Github and PyPI, and the files are uploaded.
 
-.. _github-release: https://github.com/aktau/github-release
+.. _github-release: https://github.com/j0057/github-release
 .. _twine: https://github.com/pypa/twine
