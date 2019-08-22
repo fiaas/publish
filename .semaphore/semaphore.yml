@@ -1,5 +1,3 @@
-# For more Python information and examples, see
-# https://docs.semaphoreci.com/article/83-language-python
 version: v1.0
 name: Build publish package
 agent:
@@ -18,7 +16,7 @@ blocks:
         commands:
           - export PATH="${HOME}/.local/bin":"${PATH}"
           - checkout
-          - mkdir .pip_cache
+          - mkdir "${PIP_CACHE_DIR}"
           - cache restore "setup-${SEMAPHORE_GIT_BRANCH}-$(checksum setup.py)","setup-${SEMAPHORE_GIT_BRANCH}",setup-master
           - pip install --user tox
       jobs:
@@ -34,3 +32,6 @@ blocks:
       epilogue:
         commands:
           - cache store "setup-${SEMAPHORE_GIT_BRANCH}-$(checksum setup.py)" "${PIP_CACHE_DIR}"
+promotions:
+  - name: Make release
+    pipeline_file: make-release.yml
