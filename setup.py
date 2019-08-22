@@ -47,7 +47,7 @@ def _read(filename):
 
 def main():
     setup(
-        name="fiaas-publish",
+        name="publish",
         author="FiaaS developers",
         author_email="fiaas@googlegroups.com",
         use_scm_version=True,
