@@ -9,27 +9,28 @@ agent:
 blocks:
   - name: Run tests
     task:
+      secrets:
+        - name: publish-codacy-token
+      env_vars:
+        - name: PIP_CACHE_DIR
+          value: .pip_cache
       prologue:
         commands:
+          - export PATH="${HOME}/.local/bin":"${PATH}"
           - checkout
-          - sudo pip install tox
-          - cache restore
+          - mkdir .pip_cache
+          - cache restore "setup-${SEMAPHORE_GIT_BRANCH}-$(checksum setup.py)","setup-${SEMAPHORE_GIT_BRANCH}",setup-master
+          - pip install --user tox
       jobs:
-        - name: Tests in Python 2.7
+        - name: Tests
           commands:
-            - tox -e py27
-        - name: Tests in Python 3.5
-          commands:
-            - tox -e py35
-        - name: Tests in Python 3.6
-          commands:
-            - tox -e py36
-        - name: Tests in Python 3.7
-          commands:
-            - tox -e py37
+            - tox
+          matrix:
+            - env_var: TOXENV
+              values: ["py27", "py35", "py36", "py37"]
         - name: Gather coverage data
           commands:
             - tox -e coverage
       epilogue:
         commands:
-          - cache store
+          - cache store "setup-${SEMAPHORE_GIT_BRANCH}-$(checksum setup.py)" "${PIP_CACHE_DIR}"
