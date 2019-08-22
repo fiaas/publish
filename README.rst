@@ -1,11 +1,9 @@
 publish - Tool to create a release of a Python package
 ======================================================
 
-|Build Status| |Codacy Quality Badge| |Codacy Coverage Badge|
+|Codacy Quality Badge| |Codacy Coverage Badge|
 
 
-.. |Build Status| image:: https://semaphoreci.com/api/v1/fiaas/publish/branches/master/badge.svg
-    :target: https://semaphoreci.com/fiaas/publish
 .. |Codacy Quality Badge| image:: https://api.codacy.com/project/badge/Grade/bd7d31c7ceac43eb81884b2adc4ba3ed
     :target: https://www.codacy.com/app/fiaas/publish?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fiaas/publish&amp;utm_campaign=Badge_Grade
 .. |Codacy Coverage Badge| image:: https://api.codacy.com/project/badge/Coverage/bd7d31c7ceac43eb81884b2adc4ba3ed
