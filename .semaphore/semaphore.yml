@@ -35,3 +35,7 @@ blocks:
 promotions:
   - name: Make release
     pipeline_file: make-release.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - ^refs/tags/v.*rc\d+$
