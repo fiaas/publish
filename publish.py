@@ -82,11 +82,23 @@ class Repository(object):
         """
         if self._force:
             return True
-        if self.repo.is_dirty() or self.repo.untracked_files or not self.current_tag:
+        if self.repo.is_dirty():
+            print("Repository is dirty", file=sys.stderr)
+            return False
+        if self.repo.untracked_files:
+            file_list = "\n\t".join(self.repo.untracked_files)
+            print("Repository has untracked files:\n\t{}".format(file_list), file=sys.stderr)
+            return False
+        if not self.current_tag:
+            print("No tag found")
             return False
         try:
-            return self.RELEASE_TAG_PATTERN.match(self.current_tag.tag) is not None
+            valid_tag = self.RELEASE_TAG_PATTERN.match(self.current_tag.tag) is not None
+            if not valid_tag:
+                print("Tag {} is not a valid release tag".format(self.current_tag.tag))
+            return valid_tag
         except AttributeError:
+            print("Unable to read tag name")
             return False
 
     def generate_changelog(self):
