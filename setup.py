@@ -51,7 +51,7 @@ def main():
         author="FiaaS developers",
         author_email="fiaas@googlegroups.com",
         use_scm_version=True,
-        py_modules=["publish", "get_github_release"],
+        py_modules=["publish"],
         zip_safe=True,
         include_package_data=True,
 
