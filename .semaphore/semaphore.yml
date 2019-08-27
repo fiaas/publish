@@ -38,4 +38,4 @@ promotions:
     auto_promote_on:
       - result: passed
         branch:
-          - ^refs/tags/v.*rc\d+$
+          - ^refs/tags/v\d+\.\d+\.\d+$
