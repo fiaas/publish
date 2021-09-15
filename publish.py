@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -229,7 +229,7 @@ def publish(options):
     repo = Repository(options)
     if not repo.ready_for_release():
         print("Repository is not ready for release", file=sys.stderr)
-        return
+        return 1
     changelog = repo.generate_changelog()
     artifacts = create_artifacts(changelog, options)
     uploader = Uploader(options, repo.version, changelog, artifacts)
