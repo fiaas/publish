@@ -65,3 +65,23 @@ In order for the changelog to be attached to the release on PyPI, it needs to be
 
 .. _github-release: https://github.com/j0057/github-release
 .. _twine: https://github.com/pypa/twine
+
+
+Releasing
+---------
+
+To make a new release of this project, there are a couple steps to follow. Ideally, we want to release from master, as often as possible. Version numbers should adhere to SemVer_. When you have a passing build that you want to make a release from, do the following steps:
+
+- Create an annotated tag for the commit in question, naming it ``v<major>.<minor>.<bugfix>``. For instance::
+
+    $ git tag -a v0.0.2 a1b2c3d4
+
+- Push the new tag to github::
+
+    $ git push origin v0.0.2
+
+- A new release with the version you selected as a tag should now be built and uploaded to PyPI_ and Github_
+
+.. _SemVer: http://semver.org/
+.. _PyPI: https://pypi.org/project/publish/
+.. _Github: https://github.com/fiaas/publish/releases
