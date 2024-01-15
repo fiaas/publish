@@ -40,7 +40,6 @@ import subprocess
 import sys
 import tempfile
 
-import six
 from git import Repo, BadName, GitCommandError
 from git.cmd import Git
 from github_release import gh_release_create
@@ -209,12 +208,8 @@ def create_artifacts(changelog, options):
     """
     fd, name = tempfile.mkstemp(prefix="changelog", suffix=".rst", text=True)
     formatted_changelog = format_rst_changelog(changelog, options)
-    if six.PY2:
-        with os.fdopen(fd, "w") as fobj:
-            fobj.write(formatted_changelog.encode("utf-8"))
-    else:
-        with open(fd, "w", encoding="utf-8") as fobj:
-            fobj.write(formatted_changelog)
+    with open(fd, "w", encoding="utf-8") as fobj:
+        fobj.write(formatted_changelog)
     subprocess.check_call([
         sys.executable, "setup.py",
         "egg_info", "--tag-build=",
