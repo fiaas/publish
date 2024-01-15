@@ -23,24 +23,25 @@ blocks:
   - name: Run tests
     task:
       secrets:
-        - name: publish-codacy-token
+        - name: codacy_api_token
       env_vars:
         - name: PIP_CACHE_DIR
           value: .pip_cache
       prologue:
         commands:
+          - sem-version python 3.9
           - export PATH="${HOME}/.local/bin":"${PATH}"
           - checkout
           - mkdir "${PIP_CACHE_DIR}"
           - cache restore "setup-${SEMAPHORE_GIT_BRANCH}-$(checksum setup.py)","setup-${SEMAPHORE_GIT_BRANCH}",setup-master
-          - pip install --user tox
+          - pip install tox
       jobs:
         - name: Tests
           commands:
             - tox
           matrix:
             - env_var: TOXENV
-              values: ["py27", "py35", "py36", "py37"]
+              values: ["py39"]
         - name: Gather coverage data
           commands:
             - tox -e coverage
