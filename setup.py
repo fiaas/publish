@@ -20,27 +20,21 @@ import os
 from setuptools import setup
 
 GENERIC_REQ = [
-    "six==1.12.0",
-    'GitPython==2.1.11',
+    'GitPython==3.1.41',
     "twine==1.12.1",
     "githubrelease==1.5.8",
-    "gitdb2>=2.0.0,<3.0.0",  # Pin this to avoid a problem with changed API.
-                             # TODO: Should update to latest GitPython to fix.
 ]
 
 CODE_QUALITY_REQ = [
-    'prospector==1.2.0',
+    'prospector==1.10.3',
 ]
 
 TESTS_REQ = [
-    'tox==3.6.1',
-    'mock==2.0.0',
-    'pytest==4.0.2',
-    'pytest-cov==2.6.0',
-    'pytest-html==1.19.0',
-    'pytest-sugar==0.9.2',
-    'attrs==19.1.0',  # Pin this to avoid problems caused by https://github.com/python-attrs/attrs/issues/307
-                      # TODO: Proper fix is to upgrade to pytest>5.2.0, but that drops Python 2 support
+    'tox==4.12.0',
+    'pytest==7.4.4',
+    'pytest-cov==4.1.0',
+    'pytest-html==4.1.1',
+    'pytest-sugar==0.9.7',
 ]
 
 
@@ -95,12 +89,8 @@ def main():
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.5",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.9",
             "Topic :: Internet",
             "Topic :: Software Development :: Build Tools",
             "Topic :: System :: Software Distribution",
