@@ -20,7 +20,6 @@ import os
 from setuptools import setup
 
 GENERIC_REQ = [
-    "six==1.12.0",
     'GitPython==2.1.11',
     "twine==1.12.1",
     "githubrelease==1.5.8",
@@ -34,7 +33,6 @@ CODE_QUALITY_REQ = [
 
 TESTS_REQ = [
     'tox==3.6.1',
-    'mock==2.0.0',
     'pytest==4.0.2',
     'pytest-cov==2.6.0',
     'pytest-html==1.19.0',
@@ -95,12 +93,8 @@ def main():
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.5",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.9",
             "Topic :: Internet",
             "Topic :: Software Development :: Build Tools",
             "Topic :: System :: Software Distribution",
