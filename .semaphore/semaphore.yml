@@ -23,7 +23,7 @@ blocks:
   - name: Run tests
     task:
       secrets:
-        - name: publish-codacy-token
+        - name: codacy_api_token
       env_vars:
         - name: PIP_CACHE_DIR
           value: .pip_cache
