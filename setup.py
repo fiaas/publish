@@ -20,11 +20,9 @@ import os
 from setuptools import setup
 
 GENERIC_REQ = [
-    'GitPython==2.1.11',
+    'GitPython==3.1.41',
     "twine==1.12.1",
     "githubrelease==1.5.8",
-    "gitdb2>=2.0.0,<3.0.0",  # Pin this to avoid a problem with changed API.
-                             # TODO: Should update to latest GitPython to fix.
 ]
 
 CODE_QUALITY_REQ = [
