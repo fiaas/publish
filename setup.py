@@ -26,17 +26,15 @@ GENERIC_REQ = [
 ]
 
 CODE_QUALITY_REQ = [
-    'prospector==1.2.0',
+    'prospector==1.10.3',
 ]
 
 TESTS_REQ = [
-    'tox==3.6.1',
-    'pytest==4.0.2',
-    'pytest-cov==2.6.0',
-    'pytest-html==1.19.0',
-    'pytest-sugar==0.9.2',
-    'attrs==19.1.0',  # Pin this to avoid problems caused by https://github.com/python-attrs/attrs/issues/307
-                      # TODO: Proper fix is to upgrade to pytest>5.2.0, but that drops Python 2 support
+    'tox==4.12.0',
+    'pytest==7.4.4',
+    'pytest-cov==4.1.0',
+    'pytest-html==4.1.1',
+    'pytest-sugar==0.9.7',
 ]
 
 
