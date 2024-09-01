@@ -21,7 +21,7 @@ from setuptools import setup
 
 GENERIC_REQ = [
     'GitPython==3.1.41',
-    "twine==4.0.2",
+    "twine==5.1.1",
     "githubrelease==1.5.9",
 ]
 
