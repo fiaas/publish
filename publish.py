@@ -67,18 +67,8 @@ class Repository(object):
     def __init__(self, options):
         self.repo = Repo(options.directory)
         self._force = options.force
-        current_name = self.repo.git.describe(all=True)
-        print(current_name)
-        self.current_tag = self.repo.rev_parse(current_name)
+        self.current_tag = self.repo.git.describe(all=True).split('/')[1]
         print(self.current_tag)
-
-    @property
-    def version(self):
-        tag = self.current_tag
-        try:
-            return str(tag.tag)
-        except AttributeError:
-            return str(tag)
 
     def ready_for_release(self):
         """Return true if the current git checkout is suitable for release
@@ -86,26 +76,21 @@ class Repository(object):
         To be suitable, it must not be dirty, must not have untracked files, must be an annotated tag,
         and the tag must follow the naming convention v<major>.<minor>.<bugfix>
         """
-        if self._force:
-            return True
-        if self.repo.is_dirty():
-            print("Repository is dirty", file=sys.stderr)
-            return False
-        if self.repo.untracked_files:
-            file_list = "\n\t".join(self.repo.untracked_files)
-            print("Repository has untracked files:\n\t{}".format(file_list), file=sys.stderr)
-            return False
+        if not self._force:
+            if self.repo.is_dirty():
+                print("Repository is dirty", file=sys.stderr)
+                return False
+            if self.repo.untracked_files:
+                file_list = "\n\t".join(self.repo.untracked_files)
+                print("Repository has untracked files:\n\t{}".format(file_list), file=sys.stderr)
+                return False
         if not self.current_tag:
             print("No tag found")
             return False
-        try:
-            valid_tag = self.RELEASE_TAG_PATTERN.match(self.current_tag.tag) is not None
-            if not valid_tag:
-                print("Tag {} is not a valid release tag".format(self.current_tag.tag))
-            return valid_tag
-        except AttributeError:
-            print("Unable to read tag name")
-            return False
+        tag_is_valid = self.RELEASE_TAG_PATTERN.match(self.current_tag) is not None
+        if not tag_is_valid:
+            print("Tag {} is not a valid release tag".format(self.current_tag))
+        return tag_is_valid
 
     def generate_changelog(self):
         """Use the git log to create a changelog with all changes since the previous tag"""
@@ -114,19 +99,9 @@ class Repository(object):
             previous_tag = self.repo.rev_parse(previous_name)
         except GitCommandError:
             previous_tag = THE_NULL_COMMIT
-        current = self._resolve_tag(self.current_tag)
-        previous = self._resolve_tag(previous_tag)
-        commit_range = "{}..{}".format(previous, current)
+        commit_range = "{}..{}".format(previous_tag, self.current_tag)
         return [(self._shorten(commit.hexsha), commit.summary) for commit in self.repo.iter_commits(commit_range)
                 if len(commit.parents) <= 1]
-
-    @staticmethod
-    def _resolve_tag(tag):
-        try:
-            current = tag.tag
-        except AttributeError:
-            current = tag
-        return current
 
     def _shorten(self, sha):
         return self.repo.git.rev_parse(sha, short=True)
@@ -207,7 +182,9 @@ def create_artifacts(changelog, options):
         "egg_info", "--tag-build=",
         "sdist",
         "bdist_wheel", "--universal"
-    ], env={"CHANGELOG_FILE": name})
+        ],
+        env=( os.environ.copy() | {"CHANGELOG_FILE": name} ) # see https://stackoverflow.com/a/78652759
+    )
     os.unlink(name)
     return [os.path.abspath(os.path.join("dist", fname)) for fname in os.listdir("dist")]
 
@@ -219,7 +196,7 @@ def publish(options):
         return 1
     changelog = repo.generate_changelog()
     artifacts = create_artifacts(changelog, options)
-    uploader = Uploader(options, repo.version, changelog, artifacts)
+    uploader = Uploader(options, repo.current_tag, changelog, artifacts)
     return_code = 0
     for i, release in enumerate((uploader.github_release, uploader.pypi_release)):
         try:
