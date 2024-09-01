@@ -68,7 +68,7 @@ class Repository(object):
         self.repo = Repo(options.directory)
         self._force = options.force
         self.current_tag = self.repo.git.describe(all=True).split('/')[1]
-        print(self.current_tag)
+        print(f"Current tag: {self.current_tag}", file=sys.stderr)
 
     def ready_for_release(self):
         """Return true if the current git checkout is suitable for release
@@ -89,7 +89,7 @@ class Repository(object):
             return False
         tag_is_valid = self.RELEASE_TAG_PATTERN.match(self.current_tag) is not None
         if not tag_is_valid:
-            print("Tag {} is not a valid release tag".format(self.current_tag))
+            print("Tag {} is not a valid release tag. (Expected v<major>.<minor>.<bugfix> (with numbers).)".format(self.current_tag))
         return tag_is_valid
 
     def generate_changelog(self):
@@ -212,8 +212,11 @@ def main():
     parser.add_argument("-f", "--force", action="store_true", help="Make a release even if the repo is unclean")
     parser.add_argument("-n", "--dry-run", action="store_true", help="Do everything, except upload to GH/PyPI")
     parser.add_argument("organization", help="Github organization")
-    parser.add_argument("repository", help="The repository")
+    parser.add_argument("repository", help="The name of the repository on GitHub and PyPi")
     options = parser.parse_args()
+    if not "GITHUB_TOKEN" in os.environ:
+        print("This command requires the GITHUB_TOKEN environment variable to be set. Before you run this command, try `export GITHUB_TOKEN=gh-token` (on Unix-likes) or `set GITHUB_TOKEN=gh-token` (on Windows)")
+        sys.exit(3)
     sys.exit(publish(options))
 
 
