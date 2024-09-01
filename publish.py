@@ -62,7 +62,7 @@ class Formatter(argparse.RawDescriptionHelpFormatter, argparse.ArgumentDefaultsH
 
 
 class Repository(object):
-    RELEASE_TAG_PATTERN = re.compile(r"^v\d+(\.\d+){0,2}$")
+    RELEASE_TAG_PATTERN = re.compile(r"^v(0|[1-9]\d*)(\.(0|[1-9]\d*)){0,2}$")
 
     def __init__(self, options):
         self.repo = Repo(options.directory)
@@ -89,7 +89,7 @@ class Repository(object):
             return False
         tag_is_valid = self.RELEASE_TAG_PATTERN.match(self.current_tag) is not None
         if not tag_is_valid:
-            print("Tag \"{}\" is not a valid release tag. Expected \"vX.Y.Z\" where X, Y, and Z are non-negative integers.".format(self.current_tag), file=sys.stderr)
+            print("Tag \"{}\" is not a valid release tag. Expected \"vX.Y.Z\" where X, Y, and Z are non-negative integers, formatted without leading zeros.".format(self.current_tag), file=sys.stderr)
         return tag_is_valid
 
     def generate_changelog(self):
