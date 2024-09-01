@@ -89,7 +89,7 @@ class Repository(object):
             return False
         tag_is_valid = self.RELEASE_TAG_PATTERN.match(self.current_tag) is not None
         if not tag_is_valid:
-            print("Tag {} is not a valid release tag. (Expected v<major>.<minor>.<bugfix> (with numbers).)".format(self.current_tag))
+            print("Tag \"{}\" is not a valid release tag. Expected \"vX.Y.Z\" where X, Y, and Z are non-negative integers.".format(self.current_tag), file=sys.stderr)
         return tag_is_valid
 
     def generate_changelog(self):
@@ -215,7 +215,7 @@ def main():
     parser.add_argument("repository", help="The name of the repository on GitHub and PyPi")
     options = parser.parse_args()
     if not "GITHUB_TOKEN" in os.environ:
-        print("This command requires the GITHUB_TOKEN environment variable to be set. Before you run this command, try `export GITHUB_TOKEN=gh-token` (on Unix-likes) or `set GITHUB_TOKEN=gh-token` (on Windows)")
+        print("This command requires the GITHUB_TOKEN environment variable to be set. Before you run this command, try `export GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Unix-likes) or `set GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Windows)")
         sys.exit(3)
     sys.exit(publish(options))
 
