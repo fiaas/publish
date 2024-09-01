@@ -67,18 +67,10 @@ class Repository(object):
     def __init__(self, options):
         self.repo = Repo(options.directory)
         self._force = options.force
-        self._current_tag = None
-
-    @property
-    def current_tag(self):
-        if self._current_tag:
-            return self._current_tag
-        try:
-            current_name = self.repo.git.describe(all=True)
-            self._current_tag = self.repo.rev_parse(current_name)
-            return self._current_tag
-        except (BadName, GitCommandError):
-            return None
+        current_name = self.repo.git.describe(all=True)
+        print(current_name)
+        self.current_tag = self.repo.rev_parse(current_name)
+        print(self.current_tag)
 
     @property
     def version(self):
