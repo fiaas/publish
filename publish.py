@@ -69,7 +69,7 @@ class Repository(object):
         current_name = self.repo.git.describe(all=True)
         print(f"Current name: {current_name}", file=sys.stderr)
         current_tag = self.repo.rev_parse(current_name)
-        print(f"Current tag (long): {current_tag}", file=sys.stderr)
+        print(f"Current tag id: {current_tag}", file=sys.stderr)
         try:
           self.current_tag = current_tag.tag
           print(f"Current tag: {self.current_tag}", file=sys.stderr)
