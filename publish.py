@@ -137,7 +137,7 @@ class Uploader(object):
 
     def pypi_release(self):
         """Create release in pypi.python.org, and upload artifacts and changelog"""
-        self._call("twine", "upload", *self.artifacts, msg="Failed to upload artifacts to PyPI")
+        self._call("twine", "upload", "--skip-existing", *self.artifacts, msg="Failed to upload artifacts to PyPI")
 
 
 def format_rst_changelog(changelog, options):
