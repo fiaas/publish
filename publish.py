@@ -40,7 +40,7 @@ import subprocess
 import sys
 import tempfile
 
-from git import Repo, GitCommandError
+from git import Repo, BadName, GitCommandError
 from git.cmd import Git
 from github_release import gh_release_create
 
@@ -66,8 +66,16 @@ class Repository(object):
     def __init__(self, options):
         self.repo = Repo(options.directory)
         self._force = options.force
-        self.current_tag = self.repo.git.describe(all=True).split('/')[1]
-        print(f"Current tag: {self.current_tag}", file=sys.stderr)
+        current_name = self.repo.git.describe(all=True)
+        print(f"Current name: {current_name}", file=sys.stderr)
+        current_tag = self.repo.rev_parse(current_name)
+        print(f"Current tag (long): {current_tag}", file=sys.stderr)
+        try:
+          self.current_tag = current_tag.tag
+          print(f"Current tag: {self.current_tag}", file=sys.stderr)
+        except (AttributeError, BadName, GitCommandError):
+          print("Not an annotated tag!", file=sys.stderr)
+          exit(4)
 
     def ready_for_release(self):
         """Return true if the current git checkout is suitable for release
