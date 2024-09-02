@@ -40,7 +40,7 @@ import subprocess
 import sys
 import tempfile
 
-from git import Repo, BadName, GitCommandError
+from git import Repo, GitCommandError
 from git.cmd import Git
 from github_release import gh_release_create
 
@@ -211,7 +211,7 @@ def main():
     parser.add_argument("organization", help="Github organization")
     parser.add_argument("repository", help="The name of the repository on GitHub and PyPi")
     options = parser.parse_args()
-    if not "GITHUB_TOKEN" in os.environ:
+    if "GITHUB_TOKEN" not in os.environ:
         print("Publish requires the GITHUB_TOKEN environment variable to be set. Before you run this command, try `export GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Unix-likes) or `set GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Windows)\n\nPublish also requires the TWINE_USERNAME and TWINE_PASSWORD environment variables to be set in the same way; but, unlike GITHUB_TOKEN, you will be prompted to provide them later if they aren't in the environment, so setting them beforehand is not mandatory.")
         sys.exit(3)
     sys.exit(publish(options))
