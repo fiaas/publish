@@ -44,8 +44,7 @@ from git import Repo, BadName, GitCommandError
 from git.cmd import Git
 from github_release import gh_release_create
 
-# Magical, always present, empty tree reference
-# https://stackoverflow.com/questions/9765453/
+# Magical, always present, empty tree reference. See https://stackoverflow.com/questions/9765453/
 THE_NULL_COMMIT = Git().hash_object(os.devnull, t="tree")
 
 ISSUE_NUMBER = re.compile(r"#(\d+)")
@@ -82,24 +81,24 @@ class Repository(object):
                 return False
             if self.repo.untracked_files:
                 file_list = "\n\t".join(self.repo.untracked_files)
-                print("Repository has untracked files:\n\t{}".format(file_list), file=sys.stderr)
+                print(f"Repository has untracked files:\n\t{file_list}", file=sys.stderr)
                 return False
         if not self.current_tag:
             print("No tag found")
             return False
         tag_is_valid = self.RELEASE_TAG_PATTERN.match(self.current_tag) is not None
         if not tag_is_valid:
-            print("Tag \"{}\" is not a valid release tag. Expected \"vX.Y.Z\" where X, Y, and Z are non-negative integers, formatted without leading zeros.".format(self.current_tag), file=sys.stderr)
+            print(f"""Tag "{self.current_tag}" is not a valid release tag. Expected "vX.Y.Z" where X, Y, and Z are non-negative integers, formatted without leading zeros.""", file=sys.stderr)
         return tag_is_valid
 
     def generate_changelog(self):
         """Use the git log to create a changelog with all changes since the previous tag"""
         try:
-            previous_name = self.repo.git.describe("{}^".format(self.current_tag), abbrev=0)
+            previous_name = self.repo.git.describe(f"{self.current_tag}^", abbrev=0)
             previous_tag = self.repo.rev_parse(previous_name)
         except GitCommandError:
             previous_tag = THE_NULL_COMMIT
-        commit_range = "{}..{}".format(previous_tag, self.current_tag)
+        commit_range = f"{previous_tag}..{self.current_tag}"
         return [(self._shorten(commit.hexsha), commit.summary) for commit in self.repo.iter_commits(commit_range)
                 if len(commit.parents) <= 1]
 
@@ -110,7 +109,7 @@ class Repository(object):
 class Uploader(object):
     def __init__(self, options, version, changelog, artifacts):
         self.dry_run = options.dry_run
-        self.repo = "{}/{}".format(options.organization, options.repository)
+        self.repo = f"{options.organization}/{options.repository}"
         self.version = version
         self.changelog = changelog
         self.artifacts = artifacts
@@ -118,11 +117,11 @@ class Uploader(object):
     def _call(self, *args, **kwargs):
         msg = kwargs.pop("msg", "")
         if kwargs:
-            raise TypeError("Unexpected **kwargs: {!r}".format(kwargs))
+            raise TypeError(f"Unexpected **kwargs: {kwargs!r}")
         try:
             if self.dry_run:
                 cmd_line = " ".join(repr(x) for x in args)
-                print("Dry run. Would have called: {}".format(cmd_line))
+                print(f"Dry run. Would have called: {cmd_line}")
             else:
                 subprocess.check_call(args)
         except subprocess.CalledProcessError:
@@ -145,14 +144,12 @@ def format_rst_changelog(changelog, options):
     output = CHANGELOG_HEADER.splitlines(False)
     links = {}
     for sha, summary in changelog:
-        links[sha] = ".. _{sha}: https://github.com/{org}/{repo}/commit/{sha}".format(
-            sha=sha, org=options.organization, repo=options.repository)
+        links[sha] = f".. _{sha}: https://github.com/{options.organization}/{options.repository}/commit/{sha}"
         for match in ISSUE_NUMBER.finditer(summary):
             issue_number = match.group(1)
-            links[issue_number] = ".. _#{num}: https://github.com/{org}/{repo}/issues/{num}".format(
-                num=issue_number, org=options.organization, repo=options.repository)
+            links[issue_number] = f".. _#{issue_number}: https://github.com/{options.organization}/{options.repository}/issues/{issue_number}"
         summary = ISSUE_NUMBER.sub(r"`#\1`_", summary)
-        output.append("* `{sha}`_: {summary}".format(sha=sha, summary=summary))
+        output.append(f"* `{sha}`_: {summary}")
     output.append("")
     output.extend(links.values())
     return "\n".join(output)
@@ -162,7 +159,7 @@ def format_gh_changelog(changelog):
     output = CHANGELOG_HEADER.splitlines(False)
     links = {}
     for sha, summary in changelog:
-        output.append("* {sha}: {summary}".format(sha=sha, summary=summary))
+        output.append(f"* {sha}: {summary}")
     output.append("")
     output.extend(links.values())
     return "\n".join(output)
