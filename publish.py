@@ -209,7 +209,7 @@ def main():
     parser.add_argument("-f", "--force", action="store_true", help="Make a release even if the repo is unclean")
     parser.add_argument("-n", "--dry-run", action="store_true", help="Do everything, except upload to GH/PyPI")
     parser.add_argument("organization", help="Github organization")
-    parser.add_argument("repository", help="The name of the repository on GitHub and PyPi")
+    parser.add_argument("repository", help="The name of the repository on GitHub")
     options = parser.parse_args()
     if "GITHUB_TOKEN" not in os.environ:
         print("Publish requires the GITHUB_TOKEN environment variable to be set. Before you run this command, try `export GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Unix-likes) or `set GITHUB_TOKEN=your-gh-token-blah-blah-blah-whatever` (on Windows)\n\nPublish also requires the TWINE_USERNAME and TWINE_PASSWORD environment variables to be set in the same way; but, unlike GITHUB_TOKEN, you will be prompted to provide them later if they aren't in the environment, so setting them beforehand is not mandatory.")
